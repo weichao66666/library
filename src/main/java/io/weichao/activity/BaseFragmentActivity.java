@@ -25,16 +25,19 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO app崩溃后自动重启
-//        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
-//            e.printStackTrace();
+        // app崩溃后自动重启
+//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+//            @Override
+//            public void uncaughtException(Thread t, Throwable e) {
+//                e.printStackTrace();
 //
-//            Intent intent = new Intent(this, MainActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            this.startActivity(intent);
+//                Intent intent = new Intent(BaseFragmentActivity.this, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                BaseFragmentActivity.this.startActivity(intent);
 //
-//            android.os.Process.killProcess(android.os.Process.myPid());
-//            System.exit(1);
+//                android.os.Process.killProcess(android.os.Process.myPid());
+//                System.exit(1);
+//            }
 //        });
 
         DisplayMetrics displayMetrics = HardwareInfoUtil.getDisplayMetrics(this);

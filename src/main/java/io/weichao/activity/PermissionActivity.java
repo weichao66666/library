@@ -2,6 +2,7 @@ package io.weichao.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import io.weichao.library.R;
@@ -129,27 +131,34 @@ public class PermissionActivity extends AppCompatActivity {
      * 显示缺失权限提示
      */
     private void showMissingPermissionDialog() {
-        // TODO lambda表达式支持
-//        AlertDialog.Builder builder = new AlertDialog.Builder(PermissionActivity.this);
-//        builder.setTitle(R.string.help);
-//        builder.setMessage(R.string.string_help_text);
-//
-//        // 拒绝, 退出应用
-//        builder.setNegativeButton(R.string.quit, (dialog, which) -> {
-//            setResult(PERMISSION_DENIED);
-//            finish();
-//        });
-//
-//        builder.setPositiveButton(R.string.settings, (dialog, which) -> startAppSettings());
-//
-//        builder.setCancelable(false);
-//
-//        builder.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(PermissionActivity.this);
+        builder.setTitle(R.string.help);
+        builder.setMessage(R.string.string_help_text);
+        // 拒绝, 退出应用
+        builder.setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setResult(PERMISSION_DENIED);
+                finish();
+            }
+        });
+
+        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startAppSettings();
+            }
+        });
+
+        builder.setCancelable(false);
+
+        builder.show();
     }
 
     /**
      * 启动应用的设置
      */
+
     private void startAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
