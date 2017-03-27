@@ -1,5 +1,6 @@
 package io.weichao.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
@@ -26,19 +27,19 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
         super.onCreate(savedInstanceState);
 
         // app崩溃后自动重启
-//        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-//            @Override
-//            public void uncaughtException(Thread t, Throwable e) {
-//                e.printStackTrace();
-//
-//                Intent intent = new Intent(BaseFragmentActivity.this, MainActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                BaseFragmentActivity.this.startActivity(intent);
-//
-//                android.os.Process.killProcess(android.os.Process.myPid());
-//                System.exit(1);
-//            }
-//        });
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+
+                Intent intent = new Intent(BaseFragmentActivity.this, SplashActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                BaseFragmentActivity.this.startActivity(intent);
+
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(1);
+            }
+        });
 
         DisplayMetrics displayMetrics = HardwareInfoUtil.getDisplayMetrics(this);
         width = displayMetrics.widthPixels;
