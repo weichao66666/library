@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 
 import java.util.List;
 
+import io.weichao.activity.BaseFragmentActivity;
 import io.weichao.callback.LifeCycleCallback;
 import io.weichao.util.IntentUtil;
 
@@ -16,9 +17,6 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
     private Activity mActivity;
     private Camera mCamera;
     private SurfaceHolder mSurfaceHolder;
-
-    private int height = 1080;
-    private int width = 1920;
 
     @Override
     public void onCreate() {
@@ -91,13 +89,10 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            mCamera = null;
         }
         if (mSurfaceHolder != null) {
             mSurfaceHolder.removeCallback(this);
-            mSurfaceHolder = null;
         }
-        mActivity = null;
     }
 
     public CameraPreview(Activity activity) {
@@ -152,10 +147,10 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
             parameters.setFocusMode(focusMode);
         }
         // 设置预览大小
-        int[] previewSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPreviewSize", new int[]{width, height});
+        int[] previewSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPreviewSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
         parameters.setPreviewSize(previewSizeArray[0], previewSizeArray[1]);
         // 设置图片大小
-        int[] pictureSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPictureSize", new int[]{width, height});
+        int[] pictureSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPictureSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
         parameters.setPictureSize(pictureSizeArray[0], pictureSizeArray[1]);
         // 设置图片保存格式
         List<Integer> supportedPictureFormatLists = parameters.getSupportedPictureFormats();

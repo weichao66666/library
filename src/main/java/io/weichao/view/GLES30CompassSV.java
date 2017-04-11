@@ -9,6 +9,7 @@ import android.opengl.GLSurfaceView;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import io.weichao.bean.SensorDataBean;
 import io.weichao.util.GLES30Util;
 import io.weichao.util.MatrixStateUtil;
 
@@ -19,9 +20,8 @@ import io.weichao.util.MatrixStateUtil;
 public class GLES30CompassSV extends GLSurfaceView {
     private SceneRenderer mRenderer;//场景渲染器
 
-    private float yAngle = -60;//太阳灯光绕y轴旋转的角度
+    private float xozAngleSun = -60;//太阳/灯光绕y轴旋转的角度
     private float yozAngle = 45;//摄像机绕x轴旋转的角度
-
     private float xozAngle = 0;//地球自传的角度
 
     public GLES30CompassSV(Context context) {
@@ -85,9 +85,9 @@ public class GLES30CompassSV extends GLSurfaceView {
             MatrixStateUtil.pushMatrix();
 
             //设置太阳灯光的位置
-            float sunx = (float) (Math.sin(Math.toRadians(xozAngle)) * 100);
-            float sunz = (float) (Math.cos(Math.toRadians(xozAngle)) * 100);
-            MatrixStateUtil.setLightLocationSun(sunx, 50, sunz);
+            float sunX = (float) (Math.sin(Math.toRadians(xozAngle)) * 100);
+            float sunZ = (float) (Math.cos(Math.toRadians(xozAngle)) * 100);
+            MatrixStateUtil.setLightLocationSun(sunX, 50, sunZ);
 
             MatrixStateUtil.translate(0, 0, 1f);
             MatrixStateUtil.rotate(xozAngle, 0, 1, 0);
@@ -101,7 +101,7 @@ public class GLES30CompassSV extends GLSurfaceView {
         }
     }
 
-    public void onSensorChanged(float orientation, float x, float y, float z) {
-        xozAngle = orientation;
+    public void updateAngle(SensorDataBean sensorData) {
+        xozAngle = sensorData.orientation;
     }
 }

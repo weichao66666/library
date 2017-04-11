@@ -6,36 +6,42 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.widget.RelativeLayout;
+import android.util.Log;
 
-import io.weichao.listener.OnSensorChangedListener;
+import io.weichao.bean.SensorDataBean;
+import io.weichao.util.ConstantUtil;
 
 /**
  * Created by Administrator on 2016/11/10.
  */
 
 public class SensorModel extends BaseModel implements SensorEventListener {
-    public RelativeLayout view;
+    private Activity mActivity;
 
-    private Context mContext;
     private SensorManager mSensorManager;
-    private OnSensorChangedListener mOnSensorChangedListener;
+
     private float mOrientation;
+    private float mAx;
+    private float mAy;
+    private float mAz;
+//    private float mMx;
+//    private float mMy;
+//    private float mMz;
 
     public SensorModel(Activity activity) {
-        mContext = activity;
+        mActivity = activity;
 
         mSensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
-        onResume();
-
     }
 
     @Override
     public void onResume() {
         Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
         sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
+//        sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED);
+//        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
 
@@ -50,7 +56,6 @@ public class SensorModel extends BaseModel implements SensorEventListener {
     public void onDestroy() {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
-            mSensorManager = null;
         }
     }
 
@@ -62,14 +67,19 @@ public class SensorModel extends BaseModel implements SensorEventListener {
                 //x表示手机指向的方位，0表示北,90表示东，180表示南，270表示西
                 mOrientation = event.values[0];
                 break;
+            //加速度传感器
             case Sensor.TYPE_ACCELEROMETER:
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-//                Log.d(ConstantUtil.TAG, "Orientation & Accelerometer:" + mOrientation + "," + x + "," + y + "," + z);
-                if (mOnSensorChangedListener != null) {
-                    mOnSensorChangedListener.onSensorChanged(mOrientation, x, y, z);
-                }
+                mAx = event.values[0];
+                mAy = event.values[1];
+                mAz = event.values[2];
+                break;
+            //磁力传感器
+//            case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
+//                mMx = event.values[0];
+//                mMy = event.values[1];
+//                mMz = event.values[2];
+//                break;
+            default:
                 break;
         }
     }
@@ -78,7 +88,22 @@ public class SensorModel extends BaseModel implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int i) {
     }
 
-    public void setOnSensorChangedListener(OnSensorChangedListener onSensorChangedListener) {
-        mOnSensorChangedListener = onSensorChangedListener;
+    public SensorDataBean getSensorData() {
+        Log.d(ConstantUtil.TAG, "getSensorData--mOrientation:" + mOrientation);
+        Log.d(ConstantUtil.TAG, "getSensorData--mAx:" + mAx);
+        Log.d(ConstantUtil.TAG, "getSensorData--mAy:" + mAy);
+        Log.d(ConstantUtil.TAG, "getSensorData--mAz:" + mAz);
+//        Log.d(ConstantUtil.TAG, "getSensorData--mMx:" + mMx);
+//        Log.d(ConstantUtil.TAG, "getSensorData--mMy:" + mMy);
+//        Log.d(ConstantUtil.TAG, "getSensorData--mMz:" + mMz);
+        SensorDataBean sensorDataBean = new SensorDataBean();
+        sensorDataBean.orientation = mOrientation;
+        sensorDataBean.ax = mAx;
+        sensorDataBean.ay = mAy;
+        sensorDataBean.az = mAz;
+//        sensorDataBean.mx = mMx;
+//        sensorDataBean.my = mMy;
+//        sensorDataBean.mz = mMz;
+        return sensorDataBean;
     }
 }

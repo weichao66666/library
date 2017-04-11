@@ -1,6 +1,8 @@
 package io.weichao.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
@@ -12,6 +14,7 @@ import android.view.ScaleGestureDetector;
 import io.weichao.callback.GestureCallback;
 import io.weichao.util.ConstantUtil;
 import io.weichao.util.HardwareInfoUtil;
+import io.weichao.util.PermissionUtil;
 
 public class BaseFragmentActivity extends FragmentActivity implements GestureCallback, OnGestureListener, GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener {
     public static int width;
@@ -21,6 +24,15 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
     public static ScaleGestureDetector scaleGestureDetector;
     public static int scrollDistanceWidthLimit;
     public static int scrollDistanceHeightLimit;
+
+    /**
+     * 请求码
+     */
+    private static final int REQUEST_CODE = 0;
+    /**
+     * 所需的全部权限
+     */
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.CAMERA};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +63,26 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
 
         gestureDetector = new GestureDetector(getApplicationContext(), this);
         scaleGestureDetector = new ScaleGestureDetector(getApplicationContext(), this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (Build.VERSION.SDK_INT >= 23 && PermissionUtil.isLackPermissions(this, PERMISSIONS)) {
+            //　Android 版本为6.0+，并且缺少权限, 进入权限配置页面
+            PermissionActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
+        if (requestCode == REQUEST_CODE && resultCode == PermissionActivity.PERMISSION_DENIED) {
+            finish();
+        }
     }
 
     //BaseGestureCallback
