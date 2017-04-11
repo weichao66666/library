@@ -7,7 +7,7 @@ import android.widget.RelativeLayout;
 
 import io.weichao.activity.PermissionActivity;
 import io.weichao.util.PermissionUtil;
-import io.weichao.widget.CameraPreview;
+import io.weichao.view.CameraPreview;
 
 public class CameraModel extends BaseModel {
     public static final int ON_CREATE_REQUEST_CODE = 4;

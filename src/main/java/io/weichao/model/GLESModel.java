@@ -8,8 +8,8 @@ import android.widget.RelativeLayout;
 import io.weichao.listener.OnSensorChangedListener;
 import io.weichao.util.ConstantUtil;
 import io.weichao.util.GLES30Util;
-import io.weichao.widget.GLES30CompassSV;
-import io.weichao.widget.GLES30RouteSV;
+import io.weichao.view.GLES30CompassSV;
+import io.weichao.view.GLES30RouteSV;
 
 public class GLESModel extends BaseModel implements OnSensorChangedListener {
     public RelativeLayout view;

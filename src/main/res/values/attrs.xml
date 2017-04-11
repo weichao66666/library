@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MultPagesView">
+        <attr name="visibleChildCount" format="integer"/>
+        <attr name="leftRightGapWidth" format="dimension"/>
+        <attr name="upDownGapHeightPercent" format="fraction"/>
+        <attr name="bottomImageHeightPercent" format="fraction"/>
+        <attr name="gravity" format="enum">
+            <enum name="top" value="0"/>
+            <enum name="bottom" value="1"/>
+            <enum name="center_vertical" value="2"/>
+        </attr>
+    </declare-styleable>
+
+</resources>

@@ -8,6 +8,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import io.weichao.activity.BaseFragmentActivity;
 import io.weichao.callback.GestureCallback;
 
 public class BaseOnTouchListener implements OnTouchListener {
