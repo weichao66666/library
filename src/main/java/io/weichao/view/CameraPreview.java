@@ -10,55 +10,22 @@ import android.view.SurfaceView;
 import java.util.List;
 
 import io.weichao.activity.BaseFragmentActivity;
-import io.weichao.callback.LifeCycleCallback;
 import io.weichao.util.IntentUtil;
 
-public class CameraPreview extends SurfaceView implements LifeCycleCallback, SurfaceHolder.Callback {
+public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private Activity mActivity;
+
     private Camera mCamera;
     private SurfaceHolder mSurfaceHolder;
 
-    @Override
-    public void onCreate() {
-        // TODO Auto-generated method stub
+    public CameraPreview(Activity activity) {
+        super(activity);
+        mActivity = activity;
+
+        initSurfaceHolder();
+        requestLayout();
     }
 
-    @Override
-    public void onStart() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onRestart() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStop() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onCreateContinue() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStartContinue() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onRestartContinue() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onResumeContinue() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     public void onResume() {
         if (mCamera != null) {
             try {
@@ -69,7 +36,6 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
         }
     }
 
-    @Override
     public void onPause() {
         if (mCamera != null) {
             try {
@@ -80,27 +46,24 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
         }
     }
 
-    @Override
     public void onDestroy() {
         if (mCamera != null) {
             try {
                 mCamera.stopPreview();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
                 mCamera.release();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            mCamera = null;
         }
         if (mSurfaceHolder != null) {
             mSurfaceHolder.removeCallback(this);
+            mSurfaceHolder = null;
         }
-    }
-
-    public CameraPreview(Activity activity) {
-        super(activity);
-        mActivity = activity;
-
-        initSurfaceHolder();
-        requestLayout();
     }
 
     @Override
@@ -110,7 +73,8 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
             try {
                 mCamera = Camera.open();
                 mCamera.setPreviewDisplay(mSurfaceHolder);
-                setCameraParamsAndStartPreview();
+                setCameraParams(1920, 1080);
+                mCamera.startPreview();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -135,7 +99,7 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
         mSurfaceHolder.setKeepScreenOn(true);
     }
 
-    private void setCameraParamsAndStartPreview() {
+    private void setCameraParams() {
         Parameters parameters = mCamera.getParameters();
         // 设置聚焦模式
         List<String> supportedFocusModes = parameters.getSupportedFocusModes();
@@ -147,11 +111,25 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
             parameters.setFocusMode(focusMode);
         }
         // 设置预览大小
-        int[] previewSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPreviewSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
-        parameters.setPreviewSize(previewSizeArray[0], previewSizeArray[1]);
+        List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
+        if (supportedPreviewSizes.size() > 0) {
+            int[] previewSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPreviewSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
+            Camera.Size size = mCamera.new Size(previewSizeArray[0], previewSizeArray[1]);
+            if (!supportedPreviewSizes.contains(size)) {
+                size = supportedPreviewSizes.get(0);
+            }
+            parameters.setPreviewSize(size.width, size.height);
+        }
         // 设置图片大小
-        int[] pictureSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPictureSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
-        parameters.setPictureSize(pictureSizeArray[0], pictureSizeArray[1]);
+        List<Camera.Size> supportedPictureSizes = parameters.getSupportedPictureSizes();
+        if (supportedPictureSizes.size() > 0) {
+            int[] pictureSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPictureSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
+            Camera.Size size = mCamera.new Size(pictureSizeArray[0], pictureSizeArray[1]);
+            if (!supportedPictureSizes.contains(size)) {
+                size = supportedPictureSizes.get(0);
+            }
+            parameters.setPictureSize(size.width, size.height);
+        }
         // 设置图片保存格式
         List<Integer> supportedPictureFormatLists = parameters.getSupportedPictureFormats();
         if (supportedPictureFormatLists.size() > 0) {
@@ -168,6 +146,88 @@ public class CameraPreview extends SurfaceView implements LifeCycleCallback, Sur
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mCamera.startPreview();
     }
+
+    private void setCameraParams(int width, int height) {
+        Parameters parameters = mCamera.getParameters();
+        // 设置聚焦模式
+        List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+        if (supportedFocusModes.size() > 0) {
+            String focusMode = IntentUtil.getStringExtra(mActivity.getIntent(), "ParametersFocusMode", Parameters.FOCUS_MODE_AUTO);
+            if (!supportedFocusModes.contains(focusMode)) {
+                focusMode = supportedFocusModes.get(0);
+            }
+            parameters.setFocusMode(focusMode);
+        }
+        // 设置预览大小
+//        List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
+//        if (supportedPreviewSizes.size() > 0) {
+//            int[] previewSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPreviewSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
+//            Camera.Size size = mCamera.new Size(previewSizeArray[0], previewSizeArray[1]);
+//            if (!supportedPreviewSizes.contains(size)) {
+//                size = supportedPreviewSizes.get(0);
+//            }
+//            parameters.setPreviewSize(size.width, size.height);
+//        }
+        // TODO 有虚拟按键影响，暂不处理，强制指定。
+        parameters.setPreviewSize(width, height);
+        // 设置图片大小
+//        List<Camera.Size> supportedPictureSizes = parameters.getSupportedPictureSizes();
+//        if (supportedPictureSizes.size() > 0) {
+//            int[] pictureSizeArray = IntentUtil.getIntArrayExtra(mActivity.getIntent(), "ParametersPictureSize", new int[]{BaseFragmentActivity.width, BaseFragmentActivity.height});
+//            Camera.Size size = mCamera.new Size(pictureSizeArray[0], pictureSizeArray[1]);
+//            if (!supportedPictureSizes.contains(size)) {
+//                size = supportedPictureSizes.get(0);
+//            }
+//            parameters.setPictureSize(size.width, size.height);
+//        }
+        // TODO 有虚拟按键影响，暂不处理，强制指定。
+        parameters.setPictureSize(width, height);
+        // 设置图片保存格式
+        List<Integer> supportedPictureFormatLists = parameters.getSupportedPictureFormats();
+        if (supportedPictureFormatLists.size() > 0) {
+            int pictureFormat = mActivity.getIntent().getIntExtra("ParametersPictureFormat", ImageFormat.NV21);
+            if (!supportedPictureFormatLists.contains(pictureFormat)) {
+                pictureFormat = supportedPictureFormatLists.get(0);
+            }
+            parameters.setPictureFormat(pictureFormat);
+        }
+        // 设置图片保存质量
+        parameters.setJpegQuality(mActivity.getIntent().getIntExtra("ParametersJpegQuality", 100));
+        try {
+            mCamera.setParameters(parameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+        }
+    };
+
+    private ShutterCallback mShutterCallback = new ShutterCallback() {
+        @Override
+        public void onShutter() {
+        }
+    };
+
+    private PictureCallback mRawCallback = new PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+        }
+    };
+
+    private PictureCallback mPostViewCallback = new PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+        }
+    };
+
+    private PictureCallback mJpegCallback = new PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+        }
+    };*/
 }

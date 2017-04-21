@@ -33,7 +33,7 @@ public class FileUtil {
             return null;
         }
 
-        String path = Environment.getExternalStorageDirectory() + File.separator + filePath;
+        String path = Environment.getExternalStorageDirectory().getPath() + File.separator + filePath;
         File file = new File(path);
         File fileDir = file.getParentFile();
         if (!fileDir.exists() || !fileDir.isDirectory()) {
@@ -47,7 +47,7 @@ public class FileUtil {
             return;
         }
 
-        String path = Environment.getExternalStorageDirectory() + File.separator + filePath;
+        String path = Environment.getExternalStorageDirectory().getPath() + File.separator + filePath;
         File file = new File(path);
         if (!file.isDirectory() && file.exists()) {
             file.delete();

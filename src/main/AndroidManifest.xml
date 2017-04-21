@@ -12,6 +12,9 @@
             android:name="io.weichao.activity.PermissionActivity"
             android:theme="@style/PermissionTheme.NoActionBar"
             android:screenOrientation="landscape"/>
+        <activity
+            android:name="io.weichao.activity.SplashActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

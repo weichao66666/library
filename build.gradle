@@ -7,10 +7,12 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        minSdkVersion 18
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+//        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -25,8 +27,14 @@ android {
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    // android 原生
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:design:+'
-
+//    compile 'com.android.support:multidex:+'
+    // google 官方
+    compile 'com.google.zxing:core:+'
+    compile 'com.google.zxing:android-core:+'
+    // 其他
     compile 'pl.droidsonroids.gif:android-gif-drawable:+'
+    compile 'com.facebook.fresco:fresco:+'
 }

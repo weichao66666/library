@@ -27,7 +27,6 @@ public class BrightnessUtil {
             b = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
         } catch (SettingNotFoundException e) {
             e.printStackTrace();
-
         }
 
         return b;

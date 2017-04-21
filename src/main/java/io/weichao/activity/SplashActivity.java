@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 import io.weichao.library.R;
 import io.weichao.util.PermissionUtil;
 
@@ -20,13 +22,16 @@ public class SplashActivity extends BaseFragmentActivity {
     /**
      * 所需的全部权限
      */
-    private static final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.INTERNET};
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		
+
+        // Fresco
+        Fresco.initialize(this);
+
         setContentView(R.layout.activity_splash);
     }
 
@@ -34,7 +39,7 @@ public class SplashActivity extends BaseFragmentActivity {
     protected void onResume() {
         super.onResume();
 
-        if (Build.VERSION.SDK_INT >= 23 && PermissionUtil.isLackPermissions(this, PERMISSIONS)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && PermissionUtil.isLackPermissions(this, PERMISSIONS)) {
             //　Android 版本为6.0+，并且缺少权限, 进入权限配置页面
             PermissionActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
         } else {

@@ -18,7 +18,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.widget.Scroller;
 
-import io.weichao.adapter.MultPagesAdapter;
+import io.weichao.adapter.BaseMultPagesAdapter;
 import io.weichao.library.R;
 import io.weichao.util.BitmapUtil;
 import io.weichao.util.HardwareInfoUtil;
@@ -56,7 +56,7 @@ public class MultPagesView extends View {
     /*计算的变量*/
     //数据相关
     private BitmapLruCache mBitmapLruCache;//图片内存缓存
-    private MultPagesAdapter mAdapter;//数据适配器
+    private BaseMultPagesAdapter mAdapter;//数据适配器
     private int mChildCount;//child的数量
     private int mTopImageWidth;//图片的宽度
     private int mTopImageHeight;//图片的高度
@@ -273,7 +273,7 @@ public class MultPagesView extends View {
      *
      * @param adapter
      */
-    public void setAdapter(MultPagesAdapter adapter) {
+    public void setAdapter(BaseMultPagesAdapter adapter) {
         if (adapter != null) {
             mAdapter = adapter;
             mChildCount = mAdapter.getCount();

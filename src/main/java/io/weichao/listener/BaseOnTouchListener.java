@@ -10,12 +10,14 @@ import android.view.View.OnTouchListener;
 
 import io.weichao.activity.BaseFragmentActivity;
 import io.weichao.callback.GestureCallback;
+import io.weichao.util.ConstantUtil;
 
 public class BaseOnTouchListener implements OnTouchListener {
     public static final long SINGLE_TAP_TIMEOUT = 200L;
     public GestureCallback callback;
-    public int scrollDistanceWidthLimit;
-    public int scrollDistanceHeightLimit;
+
+    private int mScrollDistanceWidthLimit = (int) (BaseFragmentActivity.width * ConstantUtil.ACTIVITY_SCROLL_DISTANCE_PERCENT);
+    private int mScrollDistanceHeightLimit = (int) (BaseFragmentActivity.height * ConstantUtil.ACTIVITY_SCROLL_DISTANCE_PERCENT);
     private int mDownX;
     private int mDownY;
     private long mDownTime;
@@ -81,23 +83,23 @@ public class BaseOnTouchListener implements OnTouchListener {
                 int upX = (int) event.getX();
                 int upY = (int) event.getY();
                 // 左滑
-                if (mDownX - upX > mFlingDistanceX && (-initialVelocity > mMinimumVelocity || mDownX - upX > scrollDistanceWidthLimit)) {
+                if (mDownX - upX > mFlingDistanceX && (-initialVelocity > mMinimumVelocity || mDownX - upX > mScrollDistanceWidthLimit)) {
                     callback.onFlingLeft();
                 } else
                     // 右滑
-                    if (upX - mDownX > mFlingDistanceX && (initialVelocity > mMinimumVelocity || upX - mDownX > scrollDistanceWidthLimit)) {
+                    if (upX - mDownX > mFlingDistanceX && (initialVelocity > mMinimumVelocity || upX - mDownX > mScrollDistanceWidthLimit)) {
                         callback.onFlingRight();
                     } else
                         // 上滑
-                        if (mDownY - upY > mFlingDistanceY && (-initialVelocity > mMinimumVelocity || mDownY - upY > scrollDistanceHeightLimit)) {
+                        if (mDownY - upY > mFlingDistanceY && (-initialVelocity > mMinimumVelocity || mDownY - upY > mScrollDistanceHeightLimit)) {
                             callback.onFlingUp();
                         } else
                             // 下滑
-                            if (upY - mDownY > mFlingDistanceY && (initialVelocity > mMinimumVelocity || upY - mDownY > (scrollDistanceHeightLimit << 1))) {
+                            if (upY - mDownY > mFlingDistanceY && (initialVelocity > mMinimumVelocity || upY - mDownY > (mScrollDistanceHeightLimit << 1))) {
                                 callback.onFlingDown();
                             } else
                                 // 单击
-                                if (SystemClock.elapsedRealtime() - mDownTime < SINGLE_TAP_TIMEOUT && mOffsetX < (scrollDistanceWidthLimit >> 4) && mOffsetY < (scrollDistanceHeightLimit >> 4)) {
+                                if (SystemClock.elapsedRealtime() - mDownTime < SINGLE_TAP_TIMEOUT && mOffsetX < (mScrollDistanceWidthLimit >> 4) && mOffsetY < (mScrollDistanceHeightLimit >> 4)) {
                                     callback.onSingleTap();
                                 }
                 break;

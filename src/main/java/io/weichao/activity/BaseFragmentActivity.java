@@ -1,11 +1,10 @@
 package io.weichao.activity;
 
-import android.Manifest;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -14,9 +13,9 @@ import android.view.ScaleGestureDetector;
 import io.weichao.callback.GestureCallback;
 import io.weichao.util.ConstantUtil;
 import io.weichao.util.HardwareInfoUtil;
-import io.weichao.util.PermissionUtil;
 
 public class BaseFragmentActivity extends FragmentActivity implements GestureCallback, OnGestureListener, GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener {
+    public static Handler handler = new Handler();
     public static int width;
     public static int height;
     public static float density;
@@ -25,31 +24,24 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
     public static int scrollDistanceWidthLimit;
     public static int scrollDistanceHeightLimit;
 
-    /**
-     * 请求码
-     */
-    private static final int REQUEST_CODE = 0;
-    /**
-     * 所需的全部权限
-     */
-    private static final String[] PERMISSIONS = new String[]{Manifest.permission.CAMERA};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(ConstantUtil.TAG,"打 log 功能正常");
 
-        // app崩溃后自动重启
+        // 全局捕获异常。
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 e.printStackTrace();
 
-                Intent intent = new Intent(BaseFragmentActivity.this, SplashActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                BaseFragmentActivity.this.startActivity(intent);
-
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(1);
+                // app 崩溃后自动重启。debug 时不要开启，否则 logcat 刷新。
+//                Intent intent = new Intent(BaseFragmentActivity.this, SplashActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                BaseFragmentActivity.this.startActivity(intent);
+//
+//                android.os.Process.killProcess(android.os.Process.myPid());
+//                System.exit(1);
             }
         });
 
@@ -63,26 +55,6 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
 
         gestureDetector = new GestureDetector(getApplicationContext(), this);
         scaleGestureDetector = new ScaleGestureDetector(getApplicationContext(), this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (Build.VERSION.SDK_INT >= 23 && PermissionUtil.isLackPermissions(this, PERMISSIONS)) {
-            //　Android 版本为6.0+，并且缺少权限, 进入权限配置页面
-            PermissionActivity.startActivityForResult(this, REQUEST_CODE, PERMISSIONS);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
-        if (requestCode == REQUEST_CODE && resultCode == PermissionActivity.PERMISSION_DENIED) {
-            finish();
-        }
     }
 
     //BaseGestureCallback
@@ -167,6 +139,8 @@ public class BaseFragmentActivity extends FragmentActivity implements GestureCal
             onFlingUp();
         } else if (e2.getY() - e1.getY() > scrollDistanceHeightLimit && Math.abs(velocityY) > ConstantUtil.GESTURE_FLING_VELOCITY_LIMIT) {
             onFlingDown();
+        }else{
+            Log.d(ConstantUtil.TAG,"不满足 onFling");
         }
         return true;
     }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout android:id="@+id/root"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:keepScreenOn="true">
+
+    <com.google.android.exoplayer.AspectRatioFrameLayout
+        android:id="@+id/fl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <SurfaceView
+            android:id="@+id/sv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"/>
+
+        <View
+            android:id="@+id/shutter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.google.android.exoplayer.AspectRatioFrameLayout>
+
+</FrameLayout>

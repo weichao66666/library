@@ -35,6 +35,16 @@ public class BitmapUtil {
     }
 
     /**
+     * 获取手机存储中的图片
+     *
+     * @param path
+     * @return
+     */
+    public static Bitmap getBitmap(String path) {
+        return BitmapFactory.decodeFile(path);
+    }
+
+    /**
      * 获取手机存储或网络中的图片
      *
      * @param contentResolver
@@ -47,7 +57,7 @@ public class BitmapUtil {
         InputStream inputStream = null;
         try {
             inputStream = contentResolver.openInputStream(uri);
-            BitmapFactory.Options options = getDecodeOptions(contentResolver, uri);
+            BitmapFactory.Options options = getDecodeOptions(inputStream);
             bitmap = BitmapFactory.decodeStream(inputStream, null, options);
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,13 +74,54 @@ public class BitmapUtil {
         return bitmap;
     }
 
+    /**
+     * 获取手机存储或网络中的图片
+     *
+     * @param contentResolver
+     * @param uri
+     * @return
+     */
+    public static Bitmap getBitmap2(ContentResolver contentResolver, Uri uri) {
+        Bitmap bitmap = null;
+
+        InputStream inputStream = null;
+        try {
+            inputStream = contentResolver.openInputStream(uri);
+            BitmapFactory.Options options = getDecodeOptions(inputStream);
+            byte[] byteArray = toByteArray(inputStream);
+            bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return bitmap;
+    }
+
+    private static byte[] toByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int n;
+        while ((n = inputStream.read(buffer)) != -1) {
+            baos.write(buffer, 0, n);
+        }
+        return baos.toByteArray();
+    }
+
     public static int getBitmapRealWidth(ContentResolver contentResolver, Uri uri) {
         int width = 0;
 
         InputStream inputStream = null;
         try {
             inputStream = contentResolver.openInputStream(uri);
-            BitmapFactory.Options options = getDecodeOptions(contentResolver, uri);
+            BitmapFactory.Options options = getDecodeOptions(inputStream);
             width = options.outWidth / options.inSampleSize;
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,19 +144,16 @@ public class BitmapUtil {
         return options;
     }
 
-    private static BitmapFactory.Options getDecodeOptions(ContentResolver contentResolver, Uri uri) {
+    private static BitmapFactory.Options getDecodeOptions(InputStream inputStream) {
         //https://github.com/johnnylambada/WorldMap    取消硬件加速，加载高清大图的指定区域，实际测试移动和缩放时抖动剧烈，所以还是保留硬件加速
         //TODO 强制指定最大宽和高都为4096(硬件加速最大值，android:hardwareAccelerated="true"开启硬件加速，移动和缩放更平滑；有些机器不是4096，暂不知道获取该值方式)
-        return getDecodeOptions(4096, 4096, contentResolver, uri);
+        return getDecodeOptions(4096, 4096, inputStream);
     }
 
-    private static BitmapFactory.Options getDecodeOptions(int maxWidth, int maxHeight, ContentResolver contentResolver, Uri uri) {
+    private static BitmapFactory.Options getDecodeOptions(int maxWidth, int maxHeight, InputStream inputStream) {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
-        InputStream inputStream = null;
         try {
-            inputStream = contentResolver.openInputStream(uri);
-
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(inputStream, null, options);
             options.inSampleSize = 1;
@@ -123,14 +171,6 @@ public class BitmapUtil {
             options.inPreferredConfig = Bitmap.Config.RGB_565;
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
 
         return options;
