@@ -1,96 +1,184 @@
 package io.weichao.view;
 
-import java.lang.Math;
+import android.content.Context;
+import android.opengl.GLES30;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+import java.util.ArrayList;
+
+import io.weichao.util.GLES30Util;
+import io.weichao.util.MatrixStateUtil;
 
 /**
  * Created by WeiChao on 2016/8/5.
  */
 public class Sphere {
-    private FloatBuffer mVertexBuffer;
-    private FloatBuffer mNormalBuffer;
-    private FloatBuffer mTextureBuffer;
-    private ShortBuffer mIndexBuffer;
-    private int mIndexCount;
+    protected FloatBuffer mPositionBuffer;//顶点坐标数据缓冲
+    protected FloatBuffer mTexCoordBuffer;//顶点纹理坐标数据缓冲
+    protected int mVertexCount;
+
+    private int mProgram;//自定义渲染管线程序id
+    private int muMVPMatrixHandle;//总变换矩阵引用
+    private int muMMatrixHandle;//位置、旋转变换矩阵
+    private int maCameraHandle; //摄像机位置属性引用
+    private int maPositionHandle; //顶点位置属性引用
+    private int maNormalHandle; //顶点法向量属性引用
+    private int maTexCoordHandle; //顶点纹理坐标属性引用
+    private int maSunLightLocationHandle;//光源位置属性引用
+    private int mTextureId;
+
+    public Sphere(Context context) {
+        this(context, 1, 10);
+    }
+
+    public Sphere(Context context, float radius) {
+        this(context, radius, 10);
+    }
+
+    public Sphere(Context context, float radius, int splitCount) {
+        //初始化顶点数据
+        initVertexData(radius, splitCount);
+        //初始化着色器
+        initScript(context);
+    }
 
     /**
-     * 生成球面
-     * 官方Demo中有bug：
-     * （1）顶点坐标和顶点坐标索引不匹配，画出来的图像左右颠倒。
-     * （2）mTextureBuffer.put(texIndex + 1, (1.0f - (float) i) / (sliceCount - 1))有问题，画出来的图像缺少下半部分，且有一个极点缺少一圈贴图。
+     * 初始化顶点数据
      *
-     * @param sliceCount
      * @param radius
-     * @return
      */
-    public Sphere(int sliceCount, float radius) {
-        mIndexCount = sliceCount * sliceCount * 6;
-        int vertexCount = (sliceCount + 1) * (sliceCount + 1);
-        float arcStep = ((2.0f * (float) Math.PI) / sliceCount);// 弧度阶越
-
-        mVertexBuffer = ByteBuffer.allocateDirect(vertexCount * 3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mNormalBuffer = ByteBuffer.allocateDirect(vertexCount * 3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTextureBuffer = ByteBuffer.allocateDirect(vertexCount * 2 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mIndexBuffer = ByteBuffer.allocateDirect(mIndexCount * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
-
-        // 从北极到南极，沿任意经线遍历
-        for (int i = 0; i < sliceCount + 1; i++) {
-            float y = (float) (radius * Math.cos(arcStep * i));
-            // 从北极点看，绕任意纬线逆时针遍历
-            for (int j = 0; j < sliceCount + 1; j++) {
-                int vertex = (i * (sliceCount + 1) + j) * 3;
-                float x = (float) (radius * Math.sin(arcStep * i) * Math.sin(arcStep * j));
-                float z = (float) (radius * Math.sin(arcStep * i) * Math.cos(arcStep * j));
-
-                mVertexBuffer.put(vertex, x);
-                mVertexBuffer.put(vertex + 1, y);
-                mVertexBuffer.put(vertex + 2, z);
-
-                mNormalBuffer.put(vertex, x / radius);
-                mNormalBuffer.put(vertex + 1, y / radius);
-                mNormalBuffer.put(vertex + 2, z / radius);
-
-                int texIndex = (i * (sliceCount + 1) + j) * 2;
-                mTextureBuffer.put(texIndex, (float) j / sliceCount);
-                mTextureBuffer.put(texIndex + 1, 2 - (float) i * 2 / sliceCount); //2-：上下颠倒
-                //*2：纹理有下半部分
-            }
+    public void initVertexData(float radius, int splitCount) {
+        int span = 10;
+        try {
+            span = 180 / splitCount;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        for (int i = 0, index = 0; i < sliceCount; i++) {
-            for (int j = 0; j < sliceCount; j++) {
-                /*第1个三角形的顶点索引*/
-                mIndexBuffer.put(index++, (short) (i * (sliceCount + 1) + j));
-                mIndexBuffer.put(index++, (short) ((i + 1) * (sliceCount + 1) + (j + 1)));
-                mIndexBuffer.put(index++, (short) ((i + 1) * (sliceCount + 1) + j));
-                /*第2个三角形的顶点索引*/
-                mIndexBuffer.put(index++, (short) (i * (sliceCount + 1) + j));
-                mIndexBuffer.put(index++, (short) (i * (sliceCount + 1) + (j + 1)));
-                mIndexBuffer.put(index++, (short) ((i + 1) * (sliceCount + 1) + (j + 1)));
+        ArrayList<Float> alVertix = new ArrayList<>();
+        //将球进行单位切分的角度，纵向、横向angleSpan度一份
+        for (float vAngle = 90; vAngle > -90; vAngle = vAngle - span) {
+            for (float hAngle = 360; hAngle > 0; hAngle = hAngle - span) {
+                //纵向、横向各到一个角度后，计算对应的此点在球面上的坐标
+                double xozLength = radius * Math.cos(Math.toRadians(vAngle));
+                float x1 = (float) (xozLength * Math.cos(Math.toRadians(hAngle)));
+                float z1 = (float) (xozLength * Math.sin(Math.toRadians(hAngle)));
+                float y1 = (float) (radius * Math.sin(Math.toRadians(vAngle)));
+
+                xozLength = radius * Math.cos(Math.toRadians(vAngle - span));
+                float x2 = (float) (xozLength * Math.cos(Math.toRadians(hAngle)));
+                float z2 = (float) (xozLength * Math.sin(Math.toRadians(hAngle)));
+                float y2 = (float) (radius * Math.sin(Math.toRadians(vAngle - span)));
+
+                xozLength = radius * Math.cos(Math.toRadians(vAngle - span));
+                float x3 = (float) (xozLength * Math.cos(Math.toRadians(hAngle - span)));
+                float z3 = (float) (xozLength * Math.sin(Math.toRadians(hAngle - span)));
+                float y3 = (float) (radius * Math.sin(Math.toRadians(vAngle - span)));
+
+                xozLength = radius * Math.cos(Math.toRadians(vAngle));
+                float x4 = (float) (xozLength * Math.cos(Math.toRadians(hAngle - span)));
+                float z4 = (float) (xozLength * Math.sin(Math.toRadians(hAngle - span)));
+                float y4 = (float) (radius * Math.sin(Math.toRadians(vAngle)));
+
+                //构建第1个三角形
+                alVertix.add(x1);
+                alVertix.add(y1);
+                alVertix.add(z1);
+                alVertix.add(x2);
+                alVertix.add(y2);
+                alVertix.add(z2);
+                alVertix.add(x4);
+                alVertix.add(y4);
+                alVertix.add(z4);
+                //构建第2个三角形
+                alVertix.add(x4);
+                alVertix.add(y4);
+                alVertix.add(z4);
+                alVertix.add(x2);
+                alVertix.add(y2);
+                alVertix.add(z2);
+                alVertix.add(x3);
+                alVertix.add(y3);
+                alVertix.add(z3);
             }
         }
+        //顶点的数量为坐标值数量的1/3，因为一个顶点有3个坐标
+        mVertexCount = alVertix.size() / 3;
+
+        float[] positionArray = new float[alVertix.size()];
+        for (int i = 0; i < alVertix.size(); i++) {
+            positionArray[i] = alVertix.get(i);
+        }
+        mPositionBuffer = ByteBuffer.allocateDirect(positionArray.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mPositionBuffer.put(positionArray).position(0);
+
+        float[] texCoordArray = GLES30Util.genTexCoord((int) (360 / span), (int) (180 / span));
+        mTexCoordBuffer = ByteBuffer.allocateDirect(texCoordArray.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mTexCoordBuffer.put(texCoordArray).position(0);
     }
 
-    public FloatBuffer getVertexBuffer() {
-        return mVertexBuffer;
+    /**
+     * 初始化着色器
+     *
+     * @param context
+     */
+    public void initScript(Context context) {
+        mProgram = GLES30Util.loadProgram(context, "model/sphere/script/vertex_shader.sh", "model/sphere/script/fragment_shader.sh");
+        //获取程序中顶点位置属性引用
+        maPositionHandle = GLES30.glGetAttribLocation(mProgram, "aPosition");
+        //获取程序中顶点经纬度属性引用
+        maTexCoordHandle = GLES30.glGetAttribLocation(mProgram, "aTexCoord");
+        //获取程序中顶点法向量属性引用
+        maNormalHandle = GLES30.glGetAttribLocation(mProgram, "aNormal");
+        //获取程序中总变换矩阵引用
+        muMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
+        //获取程序中摄像机位置引用
+        maCameraHandle = GLES30.glGetUniformLocation(mProgram, "uCamera");
+        //获取程序中光源位置引用
+        maSunLightLocationHandle = GLES30.glGetUniformLocation(mProgram, "uLightLocationSun");
+        //获取位置、旋转变换矩阵引用
+        muMMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMMatrix");
     }
 
-    public FloatBuffer getNormalBuffer() {
-        return mNormalBuffer;
+    public void setTextureId(int textureId) {
+        mTextureId = textureId;
     }
 
-    public FloatBuffer getTextureBuffer() {
-        return mTextureBuffer;
-    }
+    public void draw() {
+        //指定使用某套着色器程序（必须每次都指定）
+        GLES30.glUseProgram(mProgram);
 
-    public ShortBuffer getIndexBuffer() {
-        return mIndexBuffer;
-    }
+        //将最终变换矩阵传入渲染管线
+        GLES30.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixStateUtil.getFinalMatrix(), 0);
+        //将位置、旋转变换矩阵传入渲染管线
+        GLES30.glUniformMatrix4fv(muMMatrixHandle, 1, false, MatrixStateUtil.getMMatrix(), 0);
+        // TODO 下面这句有时报错：java.lang.IllegalArgumentException: remaining() < count*3 < needed
+        //将摄像机位置传入渲染管线
+//        GLES30.glUniform3fv(maCameraHandle, 1, MatrixStateUtil.cameraFB);
+        //将光源位置传入渲染管线
+        GLES30.glUniform3fv(maSunLightLocationHandle, 1, MatrixStateUtil.lightPositionFBSun);
 
-    public int getIndexCount() {
-        return mIndexCount;
+        //将顶点位置数据送入渲染管线（必须每次都指定）
+        GLES30.glVertexAttribPointer(maPositionHandle, 3, GLES30.GL_FLOAT, false, 3 * 4, mPositionBuffer);
+        //将顶点纹理数据送入渲染管线（必须每次都指定）
+        GLES30.glVertexAttribPointer(maTexCoordHandle, 2, GLES30.GL_FLOAT, false, 2 * 4, mTexCoordBuffer);
+        //将顶点法向量数据送入渲染管线（必须每次都指定）
+        GLES30.glVertexAttribPointer(maNormalHandle, 3, GLES30.GL_FLOAT, false, 3 * 4, mPositionBuffer);
+        //启用顶点位置数据数组
+        GLES30.glEnableVertexAttribArray(maPositionHandle);
+        //启用顶点纹理数据数组
+        GLES30.glEnableVertexAttribArray(maTexCoordHandle);
+        //启用顶点法向量数据数组
+        GLES30.glEnableVertexAttribArray(maNormalHandle);
+
+        //激活纹理
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        //绑定纹理
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+
+        //绘制图形
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, mVertexCount);
     }
 }

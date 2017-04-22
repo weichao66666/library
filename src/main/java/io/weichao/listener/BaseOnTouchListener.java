@@ -13,7 +13,6 @@ import io.weichao.callback.GestureCallback;
 import io.weichao.util.ConstantUtil;
 
 public class BaseOnTouchListener implements OnTouchListener {
-    public static final long SINGLE_TAP_TIMEOUT = 200L;
     public GestureCallback callback;
 
     private int mScrollDistanceWidthLimit = (int) (BaseFragmentActivity.width * ConstantUtil.ACTIVITY_SCROLL_DISTANCE_PERCENT);
@@ -99,7 +98,7 @@ public class BaseOnTouchListener implements OnTouchListener {
                                 callback.onFlingDown();
                             } else
                                 // 单击
-                                if (SystemClock.elapsedRealtime() - mDownTime < SINGLE_TAP_TIMEOUT && mOffsetX < (mScrollDistanceWidthLimit >> 4) && mOffsetY < (mScrollDistanceHeightLimit >> 4)) {
+                                if (SystemClock.elapsedRealtime() - mDownTime < ConstantUtil.SINGLE_TAP_TIMEOUT && mOffsetX < (mScrollDistanceWidthLimit >> 4) && mOffsetY < (mScrollDistanceHeightLimit >> 4)) {
                                     callback.onSingleTap();
                                 }
                 break;

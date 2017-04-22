@@ -15,6 +15,18 @@ public class CompassModel extends BaseModel {
 
     private GLES30CompassSV mGLES30CompassSV;
 
+    public CompassModel(Activity activity) {
+        view = new RelativeLayout(activity);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        if (GLES30Util.detectOpenGLES30(activity)) {
+            mGLES30CompassSV = new GLES30CompassSV(activity);
+        } else {
+            Log.e(ConstantUtil.TAG, "OpenGL ES 3.0 not supported on device.  Exiting...");
+        }
+        view.addView(mGLES30CompassSV);
+    }
+
     @Override
     public void onResume() {
         if (mGLES30CompassSV != null) {
@@ -27,18 +39,6 @@ public class CompassModel extends BaseModel {
         if (mGLES30CompassSV != null) {
             mGLES30CompassSV.onPause();
         }
-    }
-
-    public CompassModel(Activity activity) {
-        view = new RelativeLayout(activity);
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        if (GLES30Util.detectOpenGLES30(activity)) {
-            mGLES30CompassSV = new GLES30CompassSV(activity);
-        } else {
-            Log.e(ConstantUtil.TAG, "OpenGL ES 3.0 not supported on device.  Exiting...");
-        }
-        view.addView(mGLES30CompassSV);
     }
 
     public void setSensorData(SensorDataBean sensorDataBean) {

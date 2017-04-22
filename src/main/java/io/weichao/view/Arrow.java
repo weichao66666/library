@@ -21,8 +21,6 @@ import io.weichao.util.MatrixStateUtil;
  */
 
 public class Arrow {
-    private Context mContext;
-
     private ArrayList<Float> mPositionList = new ArrayList<>();
     private ArrayList<Float> mNormalList = new ArrayList<>();
     private ArrayList<Short> mIndexList = new ArrayList<>();
@@ -39,19 +37,18 @@ public class Arrow {
     private int maNormalHandle;//顶点法向量属性引用
     private int maSunLightLocationHandle;//光源位置属性引用
 
-    public Arrow(float scaleSize, Context context) {
-        mContext = context;
+    public Arrow(Context context,float scaleSize) {
         //调用初始化顶点数据的initVertexData
-        initVertexData(scaleSize);
+        initVertexData(context,scaleSize);
         cacheData();
         //调用初始化着色器的intiShader方法
-        initScript();
+        initScript(context);
     }
 
-    private void initVertexData(float scaleSize) {
+    private void initVertexData(Context context,float scaleSize) {
         BufferedReader br = null;
         try {
-            InputStream is = mContext.getAssets().open("model/arrow/data.txt");
+            InputStream is = context.getAssets().open("model/arrow/data.txt");
             InputStreamReader isr = new InputStreamReader(is);
             br = new BufferedReader(isr);
             String str;
@@ -120,8 +117,8 @@ public class Arrow {
     }
 
     // 初始化着色器
-    private void initScript() {
-        mProgram = GLES30Util.loadProgram(mContext, "model/arrow/script/vertex.shader", "model/arrow/script/fragment.shader");
+    private void initScript(Context context) {
+        mProgram = GLES30Util.loadProgram(context, "model/arrow/script/vertex_shader.sh", "model/arrow/script/fragment_shader.sh");
         //获取程序中顶点位置属性引用
         maPositionHandle = GLES30.glGetAttribLocation(mProgram, "aPosition");
         //获取程序中顶点法向量属性引用
@@ -137,41 +134,33 @@ public class Arrow {
     }
 
     // 绘制
-    public void drawSelf() {
+    public void draw() {
         //指定使用某套着色器程序
         GLES30.glUseProgram(mProgram);
 
         //将最终变换矩阵传入渲染管线
         GLES30.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixStateUtil.getFinalMatrix(), 0);
-
         //将位置，旋转变换矩阵传入渲染管线
         GLES30.glUniformMatrix4fv(muMMatrixHandle, 1, false, MatrixStateUtil.getMMatrix(), 0);
         //将摄像机位置传入渲染管线
         GLES30.glUniform3fv(maCameraHandle, 1, MatrixStateUtil.cameraFB);
         //将光源位置传入到渲染管线中
         GLES30.glUniform3fv(maSunLightLocationHandle, 1, MatrixStateUtil.lightPositionFBSun);
-        GLES30.glVertexAttribPointer(//将顶点位置数据传入渲染管线
-                maPositionHandle,
-                3,
-                GLES30.GL_FLOAT,
-                false,
-                0,
-                mPositionBuffer
-        );
-        GLES30.glVertexAttribPointer(   //将顶点法向量数据送入渲染管线
-                maNormalHandle,
-                3,
-                GLES30.GL_FLOAT,
-                false,
-                0,
-                mPositionBuffer
-        );
+
+        // 将顶点位置数据传入渲染管线
+        GLES30.glVertexAttribPointer(maPositionHandle, 3, GLES30.GL_FLOAT, false, 0, mPositionBuffer);
+        // 将顶点法向量数据送入渲染管线
+        GLES30.glVertexAttribPointer(maNormalHandle, 3, GLES30.GL_FLOAT, false, 0, mPositionBuffer);
         //启用顶点位置数据数组
         GLES30.glEnableVertexAttribArray(maPositionHandle);
         //启用顶点法向量数据数组
         GLES30.glEnableVertexAttribArray(maNormalHandle);
 
+        //设置剔除三角形的面
+        GLES30.glCullFace(GLES30.GL_BACK);
+        //启用剔除
         GLES30.glEnable(GLES30.GL_CULL_FACE);
+
         //以三角形方式执行绘制
 //        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, mPositionList.size());
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, mIndexList.size(), GLES30.GL_UNSIGNED_SHORT, mIndexBuffer);

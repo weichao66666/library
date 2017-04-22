@@ -20,8 +20,6 @@ import io.weichao.util.MatrixStateUtil;
  * Created by admin on 2016/11/14.
  */
 public class Compass {
-    private Context mContext;
-
     private ArrayList<Float> mPositionList = new ArrayList<>();
     private ArrayList<Float> mNormalList = new ArrayList<>();
     private ArrayList<Short> mIndexList = new ArrayList<>();
@@ -40,20 +38,20 @@ public class Compass {
     private int maNormalHandle;//顶点法向量属性引用
     private int maTexCoordHandle; //顶点纹理坐标属性引用
     private int maSunLightLocationHandle;//光源位置属性引用
+    private int mTextureId;
 
-    public Compass(float scaleSize, Context context) {
-        mContext = context;
-        //调用初始化顶点数据的initVertexData
-        initVertexData(scaleSize);
+    public Compass(Context context, float scaleSize) {
+        //初始化顶点数据
+        initVertexData(context, scaleSize);
         cacheData();
-        //调用初始化着色器的intiShader方法
-        initScript();
+        //初始化着色器
+        initScript(context);
     }
 
-    private void initVertexData(float scaleSize) {
+    private void initVertexData(Context context, float scaleSize) {
         BufferedReader br = null;
         try {
-            InputStream is = mContext.getAssets().open("model/compass/data.txt");
+            InputStream is = context.getAssets().open("model/compass/data.txt");
             InputStreamReader isr = new InputStreamReader(is);
             br = new BufferedReader(isr);
             String str;
@@ -132,9 +130,8 @@ public class Compass {
         mTexCoordBuffer.put(fArray3).position(0);
     }
 
-    //初始化着色器
-    public void initScript() {
-        mProgram = GLES30Util.loadProgram(mContext, "model/compass/script/vertex.shader", "model/compass/script/fragment.shader");
+    public void initScript(Context context) {
+        mProgram = GLES30Util.loadProgram(context, "model/compass/script/vertex_shader.sh", "model/compass/script/fragment_shader.sh");
         //获取程序中顶点位置属性引用
         maPositionHandle = GLES30.glGetAttribLocation(mProgram, "aPosition");
         //获取程序中顶点法向量属性引用
@@ -151,49 +148,30 @@ public class Compass {
         muMMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMMatrix");
     }
 
+    public void setTextureId(int textureId) {
+        mTextureId = textureId;
+    }
+
     //绘制
-    public void drawSelf(int texId) {
+    public void draw() {
         //指定使用某套着色器程序
         GLES30.glUseProgram(mProgram);
 
         //将最终变换矩阵传入渲染管线
         GLES30.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, MatrixStateUtil.getFinalMatrix(), 0);
-
         //将位置，旋转变换矩阵传入渲染管线
         GLES30.glUniformMatrix4fv(muMMatrixHandle, 1, false, MatrixStateUtil.getMMatrix(), 0);
         //将摄像机位置传入渲染管线
         GLES30.glUniform3fv(maCameraHandle, 1, MatrixStateUtil.cameraFB);
         //将光源位置传入到渲染管线中
         GLES30.glUniform3fv(maSunLightLocationHandle, 1, MatrixStateUtil.lightPositionFBSun);
-        GLES30.glVertexAttribPointer(// 将顶点位置数据传入渲染管线
-                maPositionHandle,
-                3,
-                GLES30.GL_FLOAT,
-                false,
-                0,
-                mPositionBuffer
-        );
-        GLES30.glVertexAttribPointer(// 将顶点法向量数据送入渲染管线
-                maNormalHandle,
-                3,
-                GLES30.GL_FLOAT,
-                false,
-                0,
-                mPositionBuffer
-        );
-        GLES30.glVertexAttribPointer(// 将顶点纹理数据送入渲染管线
-                maTexCoordHandle,
-                2,
-                GLES30.GL_FLOAT,
-                false,
-                0,
-                mTexCoordBuffer
-        );
 
-        //绑定纹理
-        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texId);
-
+        // 将顶点位置数据传入渲染管线
+        GLES30.glVertexAttribPointer(maPositionHandle, 3, GLES30.GL_FLOAT, false, 0, mPositionBuffer);
+        // 将顶点法向量数据送入渲染管线
+        GLES30.glVertexAttribPointer(maNormalHandle, 3, GLES30.GL_FLOAT, false, 0, mPositionBuffer);
+        // 将顶点纹理数据送入渲染管线
+        GLES30.glVertexAttribPointer(maTexCoordHandle, 2, GLES30.GL_FLOAT, false, 0, mTexCoordBuffer);
         //启用顶点位置数据数组
         GLES30.glEnableVertexAttribArray(maPositionHandle);
         //启用顶点法向量数据数组
@@ -201,7 +179,12 @@ public class Compass {
         //启用顶点纹理数据数组
         GLES30.glEnableVertexAttribArray(maTexCoordHandle);
 
+        //绑定纹理
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureId);
+
         GLES30.glDisable(GLES30.GL_CULL_FACE);
+
         //以三角形方式执行绘制
 //        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, mPositionList.size());
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, mIndexList.size(), GLES30.GL_UNSIGNED_SHORT, mIndexBuffer);

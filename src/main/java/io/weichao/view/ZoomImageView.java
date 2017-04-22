@@ -14,14 +14,13 @@ import android.view.ViewTreeObserver;
 import io.weichao.callback.GestureCallback;
 import io.weichao.runnable.CountDownRunnable;
 import io.weichao.runnable.ZoomImageViewAutoScaleRunnable;
+import io.weichao.util.ConstantUtil;
+
 
 /**
  * Created by WeiChao on 2016/6/15.
  */
 public class ZoomImageView extends AppCompatImageView implements GestureCallback, ViewTreeObserver.OnGlobalLayoutListener, ScaleGestureDetector.OnScaleGestureListener {
-    public static final long SINGLE_TAP_TIMEOUT = 200L;
-    public static final float DOUBLE_TAP_TIMEOUT = SINGLE_TAP_TIMEOUT * 1.5F;
-
     public float scaleInit = 1.0F;
     public float scaleMax = 4.0F;
 
@@ -122,11 +121,11 @@ public class ZoomImageView extends AppCompatImageView implements GestureCallback
             case MotionEvent.ACTION_UP:
                 long time = SystemClock.elapsedRealtime();
                 if (mOffsetX < mScrollDistanceWidthLimit && mOffsetY < mScrollDistanceHeightLimit) {
-                    if (time - mLastTapUpTime < DOUBLE_TAP_TIMEOUT) {
+                    if (time - mLastTapUpTime < ConstantUtil.DOUBLE_TAP_TIMEOUT) {
                         onDoubleTap();
-                    } else if (time - mDownTime < SINGLE_TAP_TIMEOUT) {
+                    } else if (time - mDownTime < ConstantUtil.SINGLE_TAP_TIMEOUT) {
                         mIsSingleTap = true;
-                        countDownRunnable.countDown(SINGLE_TAP_TIMEOUT << 1);
+                        countDownRunnable.countDown(ConstantUtil.SINGLE_TAP_TIMEOUT << 1);
                     }
                 }
                 mLastTapUpTime = time;

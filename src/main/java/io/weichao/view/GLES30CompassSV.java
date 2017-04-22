@@ -18,41 +18,47 @@ import io.weichao.util.MatrixStateUtil;
  */
 @SuppressLint("ClickableViewAccessibility")
 public class GLES30CompassSV extends GLSurfaceView {
-    private SceneRenderer mRenderer;//场景渲染器
-
     private float xozAngleSun = -60;//太阳/灯光绕y轴旋转的角度
     private float yozAngle = 45;//摄像机绕x轴旋转的角度
     private float xozAngle = 0;//地球自传的角度
 
     public GLES30CompassSV(Context context) {
         super(context);
-        this.setEGLContextClientVersion(3);//设置使用OPENGL ES3.0
+        setEGLContextClientVersion(3);//设置使用OPENGL ES3.0
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        mRenderer = new SceneRenderer(context);//创建场景渲染器
+        SceneRenderer mRenderer = new SceneRenderer(context);//创建场景渲染器
         setRenderer(mRenderer);//设置渲染器
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为持续渲染
     }
 
     private class SceneRenderer implements Renderer {
-        Context context;
-        Arrow arrow;
-        Compass compass;
-        int texIdCompass;
+        private Context mContext;
+        private Arrow mArrow;
+        private Compass mCompass;
 
         public SceneRenderer(Context context) {
-            this.context = context;
+            mContext = context;
         }
 
+        @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            //创建地球对象
-            arrow = new Arrow(0.05f, context);
-            compass = new Compass(1f, context);
-            texIdCompass = GLES30Util.loadTexture(context, "model/compass/texture/compass.png");
             //设置屏幕背景颜色RGBA
             GLES30.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
+            //打开深度检测
             GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+//            //设置剔除三角形的面
+//            GLES30.glCullFace(GLES30.GL_BACK);
+//            //启用剔除
+//            GLES30.glEnable(GLES30.GL_CULL_FACE);
+
+            //创建对象
+            mArrow = new Arrow(mContext, 0.05f);
+            mCompass = new Compass(mContext, 1);
+            //初始化纹理
+            int textureIdCompass = GLES30Util.loadTexture(mContext, "model/compass/texture/compass.png");
+            mCompass.setTextureId(textureIdCompass);
+
             //初始化变换矩阵
             MatrixStateUtil.setInitStack();
         }
@@ -65,16 +71,16 @@ public class GLES30CompassSV extends GLSurfaceView {
             //调用此方法计算产生透视投影矩阵
             MatrixStateUtil.setProjectFrustum(-ratio, ratio, -1, 1, 4f, 100);
 
-            //设置太阳灯光的初始位置
-//            float sunx = (float) (Math.cos(Math.toRadians(yAngle)) * 100);
-//            float sunz = -(float) (Math.sin(Math.toRadians(yAngle)) * 100);
-//            MatrixStateUtil.setLightLocationSun(sunx, 5, sunz);
             //设置相机9参数
             float cy = (float) (7.2 * Math.sin(Math.toRadians(yozAngle)));
             float cz = (float) (7.2 * Math.cos(Math.toRadians(yozAngle)));
             float upy = (float) Math.cos(Math.toRadians(yozAngle));
             float upz = -(float) Math.sin(Math.toRadians(yozAngle));
             MatrixStateUtil.setCamera(0, cy, cz, 0, 0, 0, 0, upy, upz);
+            //设置太阳灯光的初始位置
+//            float sunx = (float) (Math.cos(Math.toRadians(yAngle)) * 100);
+//            float sunz = -(float) (Math.sin(Math.toRadians(yAngle)) * 100);
+//            MatrixStateUtil.setLightLocationSun(sunx, 5, sunz);
         }
 
         public void onDrawFrame(GL10 gl) {
@@ -89,12 +95,17 @@ public class GLES30CompassSV extends GLSurfaceView {
             float sunZ = (float) (Math.cos(Math.toRadians(xozAngle)) * 100);
             MatrixStateUtil.setLightLocationSun(sunX, 50, sunZ);
 
-            MatrixStateUtil.translate(0, 0, 1f);
+            //推坐标系到arrow位置
+            MatrixStateUtil.translate(0, 0, 1);
+            //arrow旋转
             MatrixStateUtil.rotate(xozAngle, 0, 1, 0);
-            arrow.drawSelf();
+            //绘制arrow
+            mArrow.draw();
 
+            //推坐标系到compass位置
             MatrixStateUtil.translate(0, -0.5f, 0f);
-            compass.drawSelf(texIdCompass);
+            //绘制compass
+            mCompass.draw();
 
             //恢复现场
             MatrixStateUtil.popMatrix();

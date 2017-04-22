@@ -245,4 +245,38 @@ public class GLES30Util {
 
         return programObject;
     }
+
+    /**
+     * 切分纹理产生纹理数组
+     *
+     * @param bw 纹理图切分的列数
+     * @param bh 纹理图切分的行数
+     * @return
+     */
+    public static float[] genTexCoord(int bw, int bh) {
+        float[] result = new float[bw * bh * 6 * 2];
+        float sizew = 1.0f / bw;//列数
+        float sizeh = 1.0f / bh;//行数
+        int c = 0;
+        for (int i = 0; i < bh; i++) {
+            for (int j = 0; j < bw; j++) {
+                //每行列一个矩形，由两个三角形构成，共六个点，12个纹理坐标
+                float s = j * sizew;
+                float t = i * sizeh;
+                result[c++] = s;
+                result[c++] = t;
+                result[c++] = s;
+                result[c++] = t + sizeh;
+                result[c++] = s + sizew;
+                result[c++] = t;
+                result[c++] = s + sizew;
+                result[c++] = t;
+                result[c++] = s;
+                result[c++] = t + sizeh;
+                result[c++] = s + sizew;
+                result[c++] = t + sizeh;
+            }
+        }
+        return result;
+    }
 }
