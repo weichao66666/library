@@ -17,8 +17,7 @@ set(pathToNative ${pathToProject}/${moduleName}/src/main/cpp)
 
 # --------编译并加载 OpenCV--------
 # 配置加载 Native 依赖
-set(pathToOpenCV ${pathToNative}/opencv_3_2_0)
-include_directories(${pathToOpenCV})
+include_directories(${pathToNative}/opencv_3_2_0)
 
 # 添加待编译的文件
 add_library(detection_based_tracker SHARED ${pathToNative}/opencv/DetectionBasedTracker_jni.h
@@ -34,15 +33,35 @@ target_link_libraries(detection_based_tracker
                       log)
 
 # --------编译并加载 EasyAR--------
-set(pathToEasyAR ${pathToNative}/easyar_1_3_1)
-include_directories(${pathToEasyAR})
+include_directories(${pathToNative}/easyar_1_3_1)
 add_library(helloarvideo SHARED ${pathToNative}/easyar/ar.hpp
                                 ${pathToNative}/easyar/renderer.hpp
                                 ${pathToNative}/easyar/ar.cc
                                 ${pathToNative}/easyar/renderer.cc
                                 ${pathToNative}/easyar/helloarvideo.cc)
 add_library(SO_EasyAR SHARED IMPORTED)
-set_target_properties(SO_EasyAR PROPERTIES IMPORTED_LOCATION ${pathToSO}/armeabi-v7a/libEasyAR.so)
+set_target_properties(SO_EasyAR PROPERTIES IMPORTED_LOCATION ${pathToSO}/${ANDROID_ABI}/libEasyAR.so)
 target_link_libraries(helloarvideo
                       SO_EasyAR
                       log GLESv2)
+
+# --------编译并加载 ARToolKit--------
+include_directories(${pathToNative}/artoolkit_5_3_2)
+include_directories(${pathToNative}/artoolkit_5_3_2/android)
+add_library(nft SHARED ${pathToNative}/artoolkit/ARMarkerNFT.c
+                       ${pathToNative}/artoolkit/ARMarkerNFT.h
+                       ${pathToNative}/artoolkit/color_convert_common.c
+                       ${pathToNative}/artoolkit/color_convert_common.h
+                       ${pathToNative}/artoolkit/nftBook.cpp
+                       ${pathToNative}/artoolkit/osgPlugins.h
+                       ${pathToNative}/artoolkit/trackingSub.c
+                       ${pathToNative}/artoolkit/trackingSub.h
+                       ${pathToNative}/artoolkit/VirtualEnvironment.c
+                       ${pathToNative}/artoolkit/VirtualEnvironment.h)
+add_library(SO_c++_shared SHARED IMPORTED)
+set_target_properties(SO_c++_shared PROPERTIES IMPORTED_LOCATION ${pathToSO}/${ANDROID_ABI}/libc++_shared.so)
+add_library(SO_nftBookNative SHARED IMPORTED)
+set_target_properties(SO_nftBookNative PROPERTIES IMPORTED_LOCATION ${pathToSO}/${ANDROID_ABI}/libnftBookNative.so)
+target_link_libraries(nft
+                      SO_c++_shared SO_nftBookNative
+                      log GLESv1_CM z)

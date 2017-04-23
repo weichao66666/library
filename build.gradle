@@ -46,6 +46,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':openCVLibrary320')
+    compile project(':aRBaseLib')
     // android 原生
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:design:+'

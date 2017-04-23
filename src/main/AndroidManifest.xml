@@ -18,6 +18,9 @@
         <activity
             android:name="io.weichao.activity.ARVideoActivity"
             android:screenOrientation="landscape" />
+        <activity
+            android:name="io.weichao.activity.NFTActivity"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

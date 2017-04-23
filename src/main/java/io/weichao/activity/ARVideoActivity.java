@@ -15,6 +15,10 @@ import io.weichao.model.ARVideoModel;
  */
 
 public class ARVideoActivity extends BaseFragmentActivity {
+    /**
+     * <uses-permission android:name="android.permission.INTERNET" />
+     */
+
     // PackageName：Summary1704
     private static final String KEY = "dYoURxWsoFT4BoPSQWAVk9apIEIl7faJJVTTYWchPyHek03zYUlBVKQkK4vAtQM4zGjmPWQW6Cs3AWN36nEMJ9lbMOb79A3qX0I3cc4835734cfdfa3fc59356d6f8759815O5RFsNNSiEz12BmD4AeufSYl3U3MTsT25JIXjcCEtj3e8yMw2DfUxt6unv3HkAWZb9kp";
 
