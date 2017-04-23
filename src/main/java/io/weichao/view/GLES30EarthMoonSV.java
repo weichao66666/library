@@ -18,7 +18,7 @@ import io.weichao.util.MatrixStateUtil;
  * Created by admin on 2016/11/14.
  */
 @SuppressLint("ClickableViewAccessibility")
-public class GLES30SphereSV extends GLSurfaceView {
+public class GLES30EarthMoonSV extends GLSurfaceView {
     public final static int FRAME = 30;
     private final static long DELAY = (long) (1000.0f / FRAME);
 
@@ -46,7 +46,7 @@ public class GLES30SphereSV extends GLSurfaceView {
     private float mPreviousY;//上次的触控位置Y坐标
 //    private long mDownTime;
 
-    public GLES30SphereSV(BaseFragmentActivity activity) {
+    public GLES30EarthMoonSV(BaseFragmentActivity activity) {
         super(activity);
 
         mActivity = activity;

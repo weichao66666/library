@@ -7,19 +7,19 @@ import android.widget.RelativeLayout;
 import io.weichao.activity.BaseFragmentActivity;
 import io.weichao.util.ConstantUtil;
 import io.weichao.util.GLES30Util;
-import io.weichao.view.GLES30SphereSV;
+import io.weichao.view.GLES30EarthMoonSV;
 
-public class SphereModel extends BaseModel {
+public class EarthMoonModel extends BaseModel {
     public RelativeLayout view;
 
-    private GLES30SphereSV mGLES30SphereSV;
+    private GLES30EarthMoonSV mGLES30SphereSV;
 
-    public SphereModel(BaseFragmentActivity activity) {
+    public EarthMoonModel(BaseFragmentActivity activity) {
         view = new RelativeLayout(activity);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         if (GLES30Util.detectOpenGLES30(activity)) {
-            mGLES30SphereSV = new GLES30SphereSV(activity);
+            mGLES30SphereSV = new GLES30EarthMoonSV(activity);
         } else {
             Log.e(ConstantUtil.TAG, "OpenGL ES 3.0 not supported on device.  Exiting...");
         }
