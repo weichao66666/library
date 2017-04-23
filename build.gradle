@@ -13,6 +13,13 @@ android {
         versionName "1.0"
 
 //        multiDexEnabled true
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11 -frtti -fexceptions"
+                abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips', 'mips64'
+            }
+        }
     }
     buildTypes {
         release {
@@ -24,13 +31,24 @@ android {
 //        sourceCompatibility JavaVersion.VERSION_1_8
 //        targetCompatibility JavaVersion.VERSION_1_8
 //    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':openCVLibrary320')
     // android 原生
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:design:+'
-//    compile 'com.android.support:multidex:+'
+    //    compile 'com.android.support:multidex:+'
     // google 官方
     compile 'com.google.zxing:core:+'
     compile 'com.google.zxing:android-core:+'
