@@ -56,6 +56,7 @@ public class SensorModel extends BaseModel implements SensorEventListener {
     public void onDestroy() {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
+            mSensorManager = null;
         }
     }
 

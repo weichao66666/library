@@ -27,8 +27,7 @@ public class GLES30CompassSV extends GLSurfaceView {
         setEGLContextClientVersion(3);//设置使用OPENGL ES3.0
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        SceneRenderer mRenderer = new SceneRenderer(context);//创建场景渲染器
-        setRenderer(mRenderer);//设置渲染器
+        setRenderer(new SceneRenderer(context));//设置渲染器
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为持续渲染
     }
 

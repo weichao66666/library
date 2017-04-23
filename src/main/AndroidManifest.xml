@@ -10,17 +10,19 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         <activity
             android:name="io.weichao.activity.PermissionActivity"
-            android:theme="@style/PermissionTheme.NoActionBar"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:theme="@style/PermissionTheme.NoActionBar" />
         <activity
             android:name="io.weichao.activity.SplashActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
+        <activity
+            android:name="io.weichao.activity.ARVideoActivity"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>
 
-<!--Suggestion: add 'tools:replace="android:theme"' to element-->
-    <!--<?xml version="1.0" encoding="utf-8"?>
+    <!--Suggestion: add 'tools:replace="android:theme"' to element--><!--<?xml version="1.0" encoding="utf-8"?>
     <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="io.weichao.summary1704">

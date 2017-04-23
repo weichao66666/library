@@ -36,7 +36,7 @@ public class GLES30EarthMoonSV extends GLSurfaceView {
     private float mYozAngle;//摄像机绕X轴旋转的角度
     private float mRotAngle;//自转角度
 
-//    private int mScrollDistanceWidthLimit = (int) (BaseFragmentActivity.width * ConstantUtil.ACTIVITY_SCROLL_DISTANCE_PERCENT);
+    //    private int mScrollDistanceWidthLimit = (int) (BaseFragmentActivity.width * ConstantUtil.ACTIVITY_SCROLL_DISTANCE_PERCENT);
 //    private int mScrollDistanceHeightLimit = (int) (BaseFragmentActivity.height * ConstantUtil.ACTIVITY_SCROLL_DISTANCE_PERCENT);
 //    private int mDownX;
 //    private int mDownY;
@@ -54,8 +54,7 @@ public class GLES30EarthMoonSV extends GLSurfaceView {
         setEGLContextClientVersion(3);//设置使用OPENGL ES3.0
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        SceneRenderer mRenderer = new SceneRenderer(activity);//创建场景渲染器
-        setRenderer(mRenderer);//设置渲染器
+        setRenderer(new SceneRenderer(activity));//设置渲染器
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);//设置渲染模式为持续渲染
     }
 

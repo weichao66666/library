@@ -1,0 +1,25 @@
+{
+  "images": [
+    {
+      "image": "easyar/argame00.jpg",
+      "name": "argame"
+    },
+    {
+      "image": "easyar/namecard.jpg",
+      "name": "namecard"
+    },
+    {
+      "image": "easyar/playMp3_1.jpg",
+      "name": "playMp3_1"
+    },
+    {
+      "image": "easyar/idback.jpg",
+      "name": "idback",
+      "size": [
+        8.56,
+        5.4
+      ],
+      "uid": "uid-string"
+    }
+  ]
+}
