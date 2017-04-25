@@ -106,22 +106,22 @@ void HelloARVideo::render()
         }
         if (!tracked_target) {
             if (video == NULL) {
-                if(frame.targets()[0].target().name() == std::string("argame") && texid[0]) {
+                if(frame.targets()[0].target().name() == std::string("porsche918") && texid[0]) {
                     video = new ARVideo;
-                    video->openVideoFile("easyar/video.mp4", texid[0]);
+                    video->openVideoFile("easyar/porsche918.mp4", texid[0]);
                     video_renderer = renderer[0];
                 }
-                else if(frame.targets()[0].target().name() == std::string("namecard") && texid[1]) {
+                else if(frame.targets()[0].target().name() == std::string("fire") && texid[1]) {
                     video = new ARVideo;
-                    video->openTransparentVideoFile("easyar/transparentvideo.mp4", texid[1]);
+                    video->openTransparentVideoFile("easyar/fire.mp4", texid[1]);
                     video_renderer = renderer[1];
                 }
-                else if(frame.targets()[0].target().name() == std::string("idback") && texid[2]) {
+                else if(frame.targets()[0].target().name() == std::string("stream") && texid[2]) {
                     video = new ARVideo;
                     video->openStreamingVideo("http://7xl1ve.com5.z0.glb.clouddn.com/sdkvideo/EasyARSDKShow201520.mp4", texid[2]);
                     video_renderer = renderer[2];
                 }
-                else if(frame.targets()[0].target().name() == std::string("playMp3_1")) {
+                else if(frame.targets()[0].target().name() == std::string("MP3_1")) {
                     int status;
                     JNIEnv *env = NULL;
                     status = g_javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
@@ -134,9 +134,9 @@ void HelloARVideo::render()
                     jclass clazz = env->FindClass("io/weichao/util/MediaUtil");
 //                    jmethodID c_id = env->GetMethodID(clazz,"<init>", "()V");
 //                    jobject obj = env->NewObject(clazz,c_id);
-//                    jmethodID m_id = env->GetMethodID(clazz,"playMp3_1", "()V");
+//                    jmethodID m_id = env->GetMethodID(clazz,"playMP3_1", "()V");
 //                    env->CallVoidMethod(obj, m_id);
-                    jmethodID m_id = env->GetStaticMethodID(clazz,"playMp3_1", "()V");
+                    jmethodID m_id = env->GetStaticMethodID(clazz,"playMP3_1", "()V");
                     env->CallStaticVoidMethod(clazz, m_id);
                 }
             }

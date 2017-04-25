@@ -16,7 +16,7 @@ public class MediaUtil {
     private MediaUtil() {
     }
 
-    public static void playMp3_1() {
+    public static void playMP3_1() {
         if (mMediaPlayer != null) {
             return;
         }
