@@ -10,8 +10,11 @@ import java.io.IOException;
  * Created by WEI CHAO on 2017/4/9.
  */
 
-public class MediaUtil  {
+public class MediaUtil {
     private static MediaPlayer mMediaPlayer;
+
+    private MediaUtil() {
+    }
 
     public static void playMp3_1() {
         if (mMediaPlayer != null) {

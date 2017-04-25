@@ -21,6 +21,9 @@ public class MatrixStateUtil {
     private static float[] lightLocationSun = new float[]{0, 0, 0};//太阳定位光光源的位置
     private static Stack<float[]> mStack = new Stack<>();//保护变换矩阵的栈
 
+    private MatrixStateUtil() {
+    }
+
     public static void setInitStack()//获取不变初始矩阵
     {
         currMatrix = new float[16];

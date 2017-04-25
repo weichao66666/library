@@ -6,6 +6,9 @@ import android.widget.Scroller;
 import java.lang.reflect.Field;
 
 public class ViewPagerUtil {
+    private ViewPagerUtil() {
+    }
+
     public static void setScroller(ViewPager viewPager, Scroller scroller) {
         try {
             Field mScroller = ViewPager.class.getDeclaredField("mScroller");

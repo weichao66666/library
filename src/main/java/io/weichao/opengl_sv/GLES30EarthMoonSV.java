@@ -1,4 +1,4 @@
-package io.weichao.view;
+package io.weichao.opengl_sv;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,6 +11,8 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import io.weichao.activity.BaseFragmentActivity;
+import io.weichao.opengl_obj.DoubleHemiSphere;
+import io.weichao.opengl_obj.Sphere;
 import io.weichao.util.GLES30Util;
 import io.weichao.util.MatrixStateUtil;
 

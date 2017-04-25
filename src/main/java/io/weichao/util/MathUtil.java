@@ -7,6 +7,9 @@ import java.util.Map;
  */
 
 public class MathUtil {
+    private MathUtil() {
+    }
+
     public static int getVariance(int[] ints1, int[] ints2) {
         if (ints1 == null || ints2 == null || ints1.length != ints2.length) {
             return -1;
@@ -93,5 +96,14 @@ public class MathUtil {
         }
 
         return Math.round(sum * 1.0f / ints.length);
+    }
+
+    public static float getAngle(float center_x, float center_y, float post_x, float post_y) {
+        float tmpv_x = post_x - center_x;
+        float tmpv_y = post_y - center_y;
+        float d = (float) Math.sqrt(tmpv_x * tmpv_x + tmpv_y * tmpv_y);
+        float cos = tmpv_x / d;
+        float angle = (float) Math.toDegrees(Math.acos(cos));
+        return (tmpv_y < 0) ? angle * -1 : angle;
     }
 }

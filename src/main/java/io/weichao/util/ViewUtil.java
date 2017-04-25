@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.View;
 
 public class ViewUtil {
+    private ViewUtil() {
+    }
+
     public static int dp2px(Context context, int dp) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);

@@ -1,4 +1,4 @@
-package io.weichao.view;
+package io.weichao.opengl_obj;
 
 import android.content.Context;
 import android.opengl.GLES30;

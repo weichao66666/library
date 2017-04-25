@@ -7,6 +7,9 @@ import java.util.List;
  */
 
 public class ListUtil {
+    private ListUtil() {
+    }
+
     public static int getAverage(List<Integer> list) {
         if (list == null || list.size() <= 0) {
             return 0;

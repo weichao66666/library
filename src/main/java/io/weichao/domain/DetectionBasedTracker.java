@@ -1,9 +1,11 @@
-package org.opencv.samples.facedetect;
+package io.weichao.domain;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 
 public class DetectionBasedTracker {
+    private long mNativeObj = 0;
+
     public DetectionBasedTracker(String cascadeName, int minFaceSize) {
         mNativeObj = nativeCreateObject(cascadeName, minFaceSize);
     }
@@ -16,6 +18,11 @@ public class DetectionBasedTracker {
         nativeStop(mNativeObj);
     }
 
+    public void release() {
+        nativeDestroyObject(mNativeObj);
+        mNativeObj = 0;
+    }
+
     public void setMinFaceSize(int size) {
         nativeSetFaceSize(mNativeObj, size);
     }
@@ -24,20 +31,13 @@ public class DetectionBasedTracker {
         nativeDetect(mNativeObj, imageGray.getNativeObjAddr(), faces.getNativeObjAddr());
     }
 
-    public void release() {
-        nativeDestroyObject(mNativeObj);
-        mNativeObj = 0;
-    }
-
-    private long mNativeObj = 0;
-
     private static native long nativeCreateObject(String cascadeName, int minFaceSize);
-
-    private static native void nativeDestroyObject(long thiz);
 
     private static native void nativeStart(long thiz);
 
     private static native void nativeStop(long thiz);
+
+    private static native void nativeDestroyObject(long thiz);
 
     private static native void nativeSetFaceSize(long thiz, int size);
 

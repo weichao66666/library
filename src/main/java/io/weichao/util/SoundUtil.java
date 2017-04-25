@@ -9,6 +9,9 @@ import android.media.AudioManager;
  */
 
 public class SoundUtil {
+    private SoundUtil() {
+    }
+
     public static void raiseMusicAudio(Context context) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,

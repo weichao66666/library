@@ -14,6 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 public class GLES30Util {
+    private GLES30Util() {
+    }
+
     public static boolean detectOpenGLES30(Activity activity) {
         ActivityManager am = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
         return (am.getDeviceConfigurationInfo().reqGlEsVersion >= 0x30000);

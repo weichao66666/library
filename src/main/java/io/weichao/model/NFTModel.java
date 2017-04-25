@@ -2,30 +2,32 @@ package io.weichao.model;
 
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import io.weichao.activity.BaseFragmentActivity;
 import io.weichao.activity.NFTActivity;
-import io.weichao.view.CameraSurface;
+import io.weichao.artoolkit.ARToolkitCameraSV;
 
 public class NFTModel extends BaseModel {
     private final Activity mActivity;
 
     public RelativeLayout view;
 
-    private CameraSurface mCameraSurface;
+    private ARToolkitCameraSV mCameraSurface;
     private GLSurfaceView mGLSurfaceView;
 
     public NFTModel(Activity activity) {
         mActivity = activity;
 
         view = new RelativeLayout(activity);
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(BaseFragmentActivity.height * 4 / 3, BaseFragmentActivity.height);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        view.setLayoutParams(layoutParams);
 
-        mCameraSurface = new CameraSurface(activity);
+        mCameraSurface = new ARToolkitCameraSV(activity);
         view.addView(mCameraSurface);
 
         mGLSurfaceView = new GLSurfaceView(activity);

@@ -7,7 +7,7 @@ import android.widget.RelativeLayout;
 import io.weichao.activity.BaseFragmentActivity;
 import io.weichao.util.ConstantUtil;
 import io.weichao.util.GLES30Util;
-import io.weichao.view.GLES30EarthMoonSV;
+import io.weichao.opengl_sv.GLES30EarthMoonSV;
 
 public class EarthMoonModel extends BaseModel {
     public RelativeLayout view;

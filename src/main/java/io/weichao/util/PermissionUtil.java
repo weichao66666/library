@@ -53,6 +53,9 @@ public class PermissionUtil {
      * permission:android.permission.READ_CELL_BROADCASTS
      */
 
+    private PermissionUtil() {
+    }
+
     /**
      * 判断权限集合
      *

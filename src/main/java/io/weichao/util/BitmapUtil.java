@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class BitmapUtil {
+    private BitmapUtil() {
+    }
+
     /**
      * 获取drawable中的图片
      *

@@ -11,6 +11,9 @@ import java.util.Locale;
  */
 
 public class LanguageUtil {
+    private LanguageUtil() {
+    }
+
     public static final String SIMPLIFIED_CHINESE = "zh";
     public static final String ENGLISH = "en";
 

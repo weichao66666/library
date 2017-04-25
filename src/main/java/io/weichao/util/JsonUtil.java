@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class JsonUtil {
+    private JsonUtil() {
+    }
+
     /**
      * 将Javabean转换为Map
      *

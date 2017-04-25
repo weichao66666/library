@@ -1,0 +1,66 @@
+[
+  {
+    "name": "a",
+    "latitude": 39.969709,
+    "longitude": 116.319948,
+    "altitude": 0,
+    "bitmap": "arpoi/a.jpg"
+  },
+  {
+    "name": "b",
+    "latitude": 39.964075,
+    "longitude": 116.321092,
+    "altitude": 0,
+    "bitmap": "arpoi/b.jpg"
+  },
+  {
+    "name": "c",
+    "latitude": 39.959254,
+    "longitude": 116.317066,
+    "altitude": 0,
+    "bitmap": "arpoi/c.jpg"
+  },
+  {
+    "name": "d",
+    "latitude": 39.957872,
+    "longitude": 116.323246,
+    "altitude": 0,
+    "bitmap": "arpoi/d.jpg"
+  },
+  {
+    "name": "e",
+    "latitude": 39.96117,
+    "longitude": 116.326754,
+    "altitude": 0,
+    "bitmap": "arpoi/e.jpg"
+  },
+  {
+    "name": "f",
+    "latitude": 39.96647,
+    "longitude": 116.325837,
+    "altitude": 0,
+    "color": "#FF00FF00",
+    "bitmap": "arpoi/f.jpg"
+  },
+  {
+    "name": "g",
+    "latitude": 39.970544,
+    "longitude": 116.321065,
+    "altitude": 0,
+    "bitmap": "arpoi/g.jpg"
+  },
+  {
+    "name": "h",
+    "latitude": 39.976022,
+    "longitude": 116.317524,
+    "altitude": 0,
+    "bitmap": "arpoi/h.jpg"
+  },
+  {
+    "name": "i",
+    "latitude": 39.976351,
+    "longitude": 116.328736,
+    "altitude": 0,
+    "bitmap": "arpoi/i.jpg"
+  }
+]

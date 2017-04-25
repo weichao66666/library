@@ -7,6 +7,9 @@ import android.view.View;
  * Created by WeiChao on 2016/6/23.
  */
 public class SnackbarUtil {
+    private SnackbarUtil() {
+    }
+
     public static void showText(View view, String message, int duration) {
         Snackbar.make(view, message, duration).show();
     }

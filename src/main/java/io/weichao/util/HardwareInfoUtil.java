@@ -8,6 +8,9 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 public class HardwareInfoUtil {
+    private HardwareInfoUtil() {
+    }
+
     public static DisplayMetrics getDisplayMetrics(Activity activity) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

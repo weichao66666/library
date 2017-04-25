@@ -5,6 +5,9 @@ import android.graphics.Bitmap.CompressFormat;
 import android.text.TextUtils;
 
 public class IntentUtil {
+    private IntentUtil() {
+    }
+
     public static String getStringExtra(Intent intent, String name, String defaultValue) {
         String string = intent.getStringExtra(name);
         if (TextUtils.isEmpty(string)) {

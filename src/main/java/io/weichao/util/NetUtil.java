@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class NetUtil {
+    private NetUtil() {
+    }
 
     public static int streamRead(InputStream is, byte[] buffer, int offset, int size) {
         if (is == null || buffer == null || offset < 0 || size < 0) {

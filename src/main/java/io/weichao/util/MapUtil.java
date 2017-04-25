@@ -6,6 +6,9 @@ import java.util.Map;
  * Created by WEI CHAO on 2016/12/7.
  */
 public class MapUtil {
+    private MapUtil() {
+    }
+
     public static int getIntKeyWithMaxValue(Map<Integer, Integer> map) {
         int key = -1, value = Integer.MIN_VALUE;
 

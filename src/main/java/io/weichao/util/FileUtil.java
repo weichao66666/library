@@ -11,16 +11,19 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FileUtil {
-	public static void rename(String fileDir, String suffix) {
-		File file = new File(fileDir);
-		File[] listFiles = file.listFiles();
-		for (int i = 0; i < listFiles.length; i++) {
-			File f = listFiles[i];
-			String absolutePath = f.getAbsolutePath();
-			File newfile = new File(absolutePath + suffix);
-			f.renameTo(newfile);
-		}
-	}
+    private FileUtil() {
+    }
+
+    public static void rename(String fileDir, String suffix) {
+        File file = new File(fileDir);
+        File[] listFiles = file.listFiles();
+        for (int i = 0; i < listFiles.length; i++) {
+            File f = listFiles[i];
+            String absolutePath = f.getAbsolutePath();
+            File newfile = new File(absolutePath + suffix);
+            f.renameTo(newfile);
+        }
+    }
 
     /**
      * 获取指定路径(相对路径)下的文件

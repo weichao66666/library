@@ -5,6 +5,9 @@ import android.content.Context;
 public class SharedPreferenceUtil {
     public static final String NAME = "io.weichao.util.sharedPreference";
 
+    private SharedPreferenceUtil() {
+    }
+
     public static String getString(Context context, String key) {
         return context.getSharedPreferences(NAME, Context.MODE_PRIVATE).getString(key, "");
     }

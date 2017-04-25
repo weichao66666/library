@@ -1,4 +1,4 @@
-package io.weichao.view;
+package io.weichao.opengl_sv;
 
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
@@ -10,10 +10,9 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 import io.weichao.activity.ARVideoActivity;
-import io.weichao.model.ARVideoModel;
 
-public class GLVideoView extends GLSurfaceView {
-    public GLVideoView(Activity activity) {
+public class GLVideoSV extends GLSurfaceView {
+    public GLVideoSV(Activity activity) {
         super(activity);
 
         setEGLContextFactory(new ContextFactory());

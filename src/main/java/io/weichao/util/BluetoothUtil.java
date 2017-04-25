@@ -4,13 +4,16 @@ package io.weichao.util;
  * Created by Administrator on 2016/10/18.
  */
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 public class BluetoothUtil {
+    private BluetoothUtil() {
+    }
+
     /**
      * 与设备配对 参考源码：platform/packages/apps/Settings.git
      * /Settings/src/com/android/settings/bluetooth/CachedBluetoothDevice.java

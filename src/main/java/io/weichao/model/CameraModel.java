@@ -3,7 +3,7 @@ package io.weichao.model;
 import android.support.v4.app.FragmentActivity;
 import android.widget.RelativeLayout;
 
-import io.weichao.view.CameraPreview;
+import io.weichao.view.BaseCameraSurfaceView;
 
 public class CameraModel extends BaseModel {
 //    private static final String[] PERMISSIONS = new String[]{Manifest.permission.CAMERA};
@@ -18,35 +18,35 @@ public class CameraModel extends BaseModel {
     public RelativeLayout view;
 
     private FragmentActivity mActivity;
-    private CameraPreview mPreview;
+    private BaseCameraSurfaceView mSurfaceView;
 
     public CameraModel(FragmentActivity activity) {
         mActivity = activity;
 
         view = new RelativeLayout(activity);
 
-        mPreview = new CameraPreview(activity);
-        view.addView(mPreview);
+        mSurfaceView = new BaseCameraSurfaceView(activity);
+        view.addView(mSurfaceView);
     }
 
     @Override
     public void onResume() {
-        if (mPreview != null) {
-            mPreview.onResume();
+        if (mSurfaceView != null) {
+            mSurfaceView.onResume();
         }
     }
 
     @Override
     public void onPause() {
-        if (mPreview != null) {
-            mPreview.onPause();
+        if (mSurfaceView != null) {
+            mSurfaceView.onPause();
         }
     }
 
     @Override
     public void onDestroy() {
-        if (mPreview != null) {
-            mPreview.onDestroy();
+        if (mSurfaceView != null) {
+            mSurfaceView.onDestroy();
         }
     }
 

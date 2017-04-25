@@ -5,6 +5,9 @@ package io.weichao.util;
  */
 
 public class StringUtil {
+    private StringUtil() {
+    }
+
     public static String toString(int[] array) {
         return toString("(", ",", ")", array);
     }

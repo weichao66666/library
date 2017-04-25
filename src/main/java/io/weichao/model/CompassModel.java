@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import io.weichao.bean.SensorDataBean;
 import io.weichao.util.ConstantUtil;
 import io.weichao.util.GLES30Util;
-import io.weichao.view.GLES30CompassSV;
+import io.weichao.opengl_sv.GLES30CompassSV;
 
 public class CompassModel extends BaseModel {
     public RelativeLayout view;

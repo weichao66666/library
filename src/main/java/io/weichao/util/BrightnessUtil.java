@@ -12,6 +12,9 @@ import android.provider.Settings.SettingNotFoundException;
 import android.view.WindowManager;
 
 public class BrightnessUtil {
+    private BrightnessUtil() {
+    }
+
     /**
      * 需要权限：
      *  <uses-permission Android:name="android.permission.WRITE_SETTINGS" />
